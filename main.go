@@ -4,8 +4,6 @@
 package main
 
 import (
-	"bytes"
-	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -44,18 +42,12 @@ func fromUrl(url string) (content io.ReadCloser, err error) {
 }
 
 func processAndWriteToConsole(content io.ReadCloser) {
-	root, err := html.Parse(content) // parde and get a tree of nodes
+	root, err := html.Parse(content) // parse and get a tree of nodes
 	if err != nil {
 		panic(err)
 	}
 
-	buff := bytes.NewBufferString("")
-	err = html.Render(buff, root) // render the node tree to a buffer
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println(buff.String()) // here we only print the "renderized" tree
+	err = html.Render(os.Stdout, root) // render the node tree to STDOUT
 }
 
 func main() {
