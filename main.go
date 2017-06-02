@@ -41,13 +41,13 @@ func fromUrl(url string) (content io.ReadCloser, err error) {
 	return 
 }
 
-func processAndWriteToConsole(content io.ReadCloser) {
+func process(content io.ReadCloser, target io.Writer) {
 	root, err := html.Parse(content) // parse and get a tree of nodes
 	if err != nil {
 		panic(err)
 	}
 
-	err = html.Render(os.Stdout, root) // render the node tree to STDOUT
+	err = html.Render(target, root) // render the node tree to STDOUT
 }
 
 func main() {
@@ -57,5 +57,5 @@ func main() {
 		panic(err)
 	}
 	defer content.Close()
-	processAndWriteToConsole(content)
+	process(content, os.Stdout)
 }
