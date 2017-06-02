@@ -12,9 +12,47 @@ import (
 	"golang.org/x/net/html"
 )
 
+func walk(node *html.Node) {
+	if node.Type == html.ElementNode && node.Data == "div" {
+		for _, a := range node.Attr {
+			if a.Key == "data-loc" {
+				println("encontrado uno con data-loc", a.Val)
+				break
+			}
+		}
+	}
+
+	for child := node.FirstChild; child != nil; child = child.NextSibling {
+		walk(child)
+	}
+}
+
+func processAndWriteToConsole(content io.ReadCloser, target io.Writer) {
+	root, err := html.Parse(content) // parse and get a tree of nodes
+	if err != nil {
+		panic(err)
+	}
+	walk(root)
+	err = html.Render(target, root) // render the node tree to STDOUT
+}
+
+func main() {
+	content, err := fromFile("file.html")
+	//content, err := fromUrl("http://www.google.es")
+	if err != nil {
+		panic(err)
+	}
+	defer content.Close()
+
+	target, _ := os.Open(os.DevNull)
+	defer content.Close()
+
+	processAndWriteToConsole(content, target)
+}
+
 func fromFile(filename string) (content io.ReadCloser, err error) {
 	content, err = os.Open(filename)
-	return 
+	return
 }
 
 func fromUrl(url string) (content io.ReadCloser, err error) {
@@ -27,35 +65,16 @@ func fromUrl(url string) (content io.ReadCloser, err error) {
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return 
+		return
 	}
-	
+
 	req.Header.Add("X-MyHeader", "My Value")
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return 
-	}
-	
-	content = resp.Body 
-	return 
-}
-
-func processAndWriteToConsole(content io.ReadCloser) {
-	root, err := html.Parse(content) // parse and get a tree of nodes
-	if err != nil {
-		panic(err)
+		return
 	}
 
-	err = html.Render(os.Stdout, root) // render the node tree to STDOUT
-}
-
-func main() {
-	content, err := fromFile("file.html")
-	//content, err := fromUrl("http://www.google.es")
-	if err != nil {
-		panic(err)
-	}
-	defer content.Close()
-	processAndWriteToConsole(content)
+	content = resp.Body
+	return
 }
