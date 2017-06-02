@@ -27,7 +27,7 @@ func walk(node *html.Node) {
 	}
 }
 
-func processAndWriteToConsole(content io.ReadCloser, target io.Writer) {
+func process(content io.ReadCloser, target io.Writer) {
 	root, err := html.Parse(content) // parse and get a tree of nodes
 	if err != nil {
 		panic(err)
@@ -47,7 +47,7 @@ func main() {
 	target, _ := os.Open(os.DevNull)
 	defer content.Close()
 
-	processAndWriteToConsole(content, target)
+	process(content, target)
 }
 
 func fromFile(filename string) (content io.ReadCloser, err error) {
