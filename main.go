@@ -74,7 +74,6 @@ func fromUrl(url string) (content io.ReadCloser, err error) {
 	if err != nil {
 		return
 	}
-
 	content = resp.Body
 	return
 }

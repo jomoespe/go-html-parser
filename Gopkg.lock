@@ -1,0 +1,7 @@
+memo = ""
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/net"
+  packages = ["html"]
+  revision = "5602c733f70afc6dcec6766be0d5034d4c4f14de"
